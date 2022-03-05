@@ -659,6 +659,10 @@ async function compileCSS(
     // important: set this for relative import resolving
     opts.filename = cleanUrl(id)
 
+    if (lang === 'less') {
+      opts.relativeUrls = true
+    }
+
     const preprocessResult = await preProcessor(
       code,
       config.root,
@@ -1286,13 +1290,7 @@ function createViteLessPlugin(
           path.join(dir, '*')
         )
         if (resolved) {
-          const result = await rebaseUrls(resolved, this.rootFile, this.alias)
-          let contents: string
-          if (result && 'contents' in result) {
-            contents = result.contents
-          } else {
-            contents = fs.readFileSync(resolved, 'utf-8')
-          }
+          const contents = fs.readFileSync(resolved, 'utf-8')
           return {
             filename: path.resolve(resolved),
             contents
